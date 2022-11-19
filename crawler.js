@@ -1,28 +1,34 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+const puppeteer = require("puppeteer");
+const db = require("./db");
 
-const url = "https://www.flaconi.de/pflege/dr-barbara-sturm/baby-and-kids/dr-barbara-sturm-baby-and-kids-baby-bum-cream-babykoerpercreme.html";
+async function pageCrawler(url){
+    const browser = await puppeteer.launch({headless: false});
+    const page = await browser.newPage();
+    await page.goto(url);
+    // await page.waitForSelector('a');
+    // await page.waitForSelector('span');
 
-const booksdata = [];
+    const grabBrand = await page.evaluate(() => {
+        const brand = document.querySelector("#\\39 658977b-acca-4403-b2e1-3b3471fe9fff > h1 > a");
+        const title = document.querySelector("#\\39 658977b-acca-4403-b2e1-3b3471fe9fff > h1 > span.BrandProductNameAndTypestyle__BrandName-sc-117vbmi-2.hRyxVn");
+        const image = document.querySelector("#c3cad545-a06a-42e6-805b-a74a6457a674 > div > div > div.ProductPreviewSliderstyle__CarouselWrapper-sc-1t0tp5v-6.eOSPhh > section > div > div > div:nth-child(1) > div > img").getAttribute('src');
+        // #c3cad545-a06a-42e6-805b-a74a6457a674 > div > div > div.ProductPreviewSliderstyle__CarouselWrapper-sc-1t0tp5v-6.eOSPhh > section > div > div > div:nth-child(1) > div > img
+        return [brand.innerText.trim(), title.innerText.trim(), image];
+    });
 
-async function getGenre(url) {
-    try {
-        const response = await axios.get(url);
-        const $ = cheerio.load(response.data);
-        const books = $("#\39 658977b-acca-4403-b2e1-3b3471fe9fff > h1 > a").text().trim();
-        console.log(books);
-        // books.each(function(){
-        //     brand = $(this).find("a").text().trim();
-        //     // title = $(this).find(".price_color").text();
-        //     // image = $(this).find(".availability").text().trim();
-        //     // console.log(brand);
-        //     booksdata.push({brand});
-        // })
+    // const res = db.fetchData();
 
-        console.log(booksdata);
-    } catch (error) {
-        console.log(error);
-    }
+    // if(res[0].image === grabBrand[2]){
+    //     console.log("data Already Exist")
+    // }else{
+    //     db.InsertData(grabBrand);
+    // }
+
+    await browser.close();
+};
+
+async function acceptCookies(page) {
+    await page.$eval('#uc-center-container > div.sc-jJoQJp.dTzACB > div > div > div > button.sc-gsDKAQ.vGgQv', el => el.click());
 }
 
-getGenre(url);
+module.exports = {pageCrawler};
