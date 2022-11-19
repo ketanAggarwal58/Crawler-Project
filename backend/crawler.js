@@ -15,16 +15,9 @@ async function pageCrawler(url){
         // #c3cad545-a06a-42e6-805b-a74a6457a674 > div > div > div.ProductPreviewSliderstyle__CarouselWrapper-sc-1t0tp5v-6.eOSPhh > section > div > div > div:nth-child(1) > div > img
         return [brand.innerText.trim(), title.innerText.trim(), image];
     });
-
-    // const res = db.fetchData();
-
-    // if(res[0].image === grabBrand[2]){
-    //     console.log("data Already Exist")
-    // }else{
-    //     db.InsertData(grabBrand);
-    // }
-
+    
     await browser.close();
+    return grabBrand;
 };
 
 async function acceptCookies(page) {
