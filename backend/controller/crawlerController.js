@@ -1,5 +1,5 @@
-const pool = require("../db");
-const {fetchCrawlData} = require("../queries");
+const pool = require("../../db");
+const {fetchCrawlData} = require("../../queries");
 
 const fetchCrawledData = (request, response) => {
     pool.query(fetchCrawlData, (error, results) => {
