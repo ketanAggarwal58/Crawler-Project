@@ -431,7 +431,7 @@ function JobQueue() {
                                     },
                                     ]}
                                 >
-                                    <Select defaultValue={"in_progress"} onChange={(e) => {setJobStatus(e.target.value)}}>
+                                    <Select defaultValue={"in_progress"} onChange={(value) => setJobStatus(value)}>
                                         <Option value="in_progress">in_progress</Option>
                                         <Option value="enqueued">enqueued</Option>
                                         <Option value="completed">completed</Option>

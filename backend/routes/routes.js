@@ -14,6 +14,7 @@ router.post('/queue', (req, response) => {
         let url = req.body.url;
         pool.query(queueTableExist, (error, results) => {
             if(error) throw error;
+            console.log(results.rows[0].exists);
             if(results.rows[0].exists){
                 pool.query(InsertQueueData, [name, status, url], (error, result) => {
                     if(error) throw error;

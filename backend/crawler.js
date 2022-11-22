@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const pool = require("./db");
 const {InsertCrawledData} = require('./queries');
 
-async function pageCrawler(url){
+async function pageCrawler(url, id){
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     await page.goto(url);
@@ -23,20 +23,32 @@ async function pageCrawler(url){
         // image Url Matches
         if(error) throw error;
         var dateTime = new Date();
-        if(results.rows[0].image === grabBrand[2]){
-            pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2", ['failed', dateTime], (error, result) => {
-                if(error) throw error;
-                console.log("Queue Updated");
-            });
-        }else{
+        // console.log(results.rows[0].image);
+        if(results.rowCount === 0){
             pool.query(InsertCrawledData, [grabBrand[0], grabBrand[1], grabBrand[2]], (error, result) => {
                 if(error) throw error;
                 var dateTime = new Date();
-                pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2", ['completed', dateTime], (error, resul)=>{
+                pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2 WHERE ID = $3", ['completed', dateTime, id], (error, resul)=>{
                     if(error) throw error;
                     console.log("Data Inserted");
                 });
             });
+        }else{
+            if(results.rows[0].image === grabBrand[2]){
+                pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2 WHERE ID = $3", ['failed', dateTime, id], (error, result) => {
+                    if(error) throw error;
+                    console.log("Queue Updated");
+                });
+            }else{
+                pool.query(InsertCrawledData, [grabBrand[0], grabBrand[1], grabBrand[2]], (error, result) => {
+                    if(error) throw error;
+                    var dateTime = new Date();
+                    pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2 WHERE ID = $3", ['completed', dateTime, id], (error, resul)=>{
+                        if(error) throw error;
+                        console.log("Data Inserted");
+                    });
+                });
+            }
         }
     })
 };

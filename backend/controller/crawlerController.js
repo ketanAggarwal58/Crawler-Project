@@ -57,7 +57,7 @@ const insertCrawledData = (request, response) => {
                     // check image url
                     pool.query("SELECT * FROM results WHERE Image = $1", [row[i].job_url], (error, results) => {
                         if(error) throw error;
-                            crawler.pageCrawler(row[i].job_url).catch((error) => {console.log(error)});
+                            crawler.pageCrawler(row[i].job_url, row[i].id).catch((error) => {console.log(error)});
                             // response.status(200).json("Crawler Data Inserted");
                     });
 
@@ -84,7 +84,7 @@ const insertCrawledData = (request, response) => {
         let rowCount = results.rowCount;
         for(let i = 0; i < rowCount; i++){
             var dateTime = new Date();
-            pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2", ['in_progress', dateTime], (error, result) => {
+            pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2 WHERE ID = $3", ['in_progress', dateTime, results.rows[i].id], (error, result) => {
                 if(error) throw error;
             });
         }
