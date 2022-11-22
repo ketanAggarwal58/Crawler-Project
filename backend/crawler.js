@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
-const db = require("./db");
+const pool = require("./db");
+const {InsertCrawledData} = require('./queries');
 
 async function pageCrawler(url){
     const browser = await puppeteer.launch({headless: false});
@@ -17,7 +18,27 @@ async function pageCrawler(url){
     });
     
     await browser.close();
-    return grabBrand;
+
+    pool.query("SELECT * FROM results WHERE Image = $1", [grabBrand[2]], (error, results) => {
+        // image Url Matches
+        if(error) throw error;
+        var dateTime = new Date();
+        if(results.rows[0].image === grabBrand[2]){
+            pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2", ['failed', dateTime], (error, result) => {
+                if(error) throw error;
+                console.log("Queue Updated");
+            });
+        }else{
+            pool.query(InsertCrawledData, [grabBrand[0], grabBrand[1], grabBrand[2]], (error, result) => {
+                if(error) throw error;
+                var dateTime = new Date();
+                pool.query("UPDATE queue SET Job_Status = $1, Job_Updated_at = $2", ['completed', dateTime], (error, resul)=>{
+                    if(error) throw error;
+                    console.log("Data Inserted");
+                });
+            });
+        }
+    })
 };
 
 async function acceptCookies(page) {

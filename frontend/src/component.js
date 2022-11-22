@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Avatar, Menu, Button } from 'antd';
+import { Layout, Avatar, Menu } from 'antd';
 import Results from './resultTable';
 import JobQueue from './jobQueue';
 import Dashboard from './dashboard';
