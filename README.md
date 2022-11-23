@@ -1,4 +1,4 @@
-# Interview-project
+# Crawler project
 
 This is a project Created for interview screening round of Datazeit.io
 
@@ -21,4 +21,4 @@ The tech Stack which i used are listed Down below:
 
 In the Crawler I used the Chrome's Inspect tool and in that i used Query Selecter to select the particular query which is then used to scrap the data from the web page.
 
-I Used PostgreSQL as the queue and heavly focused on the Job_status field as it contains the status of the application.
+I Used PostgreSQL as the queue and heavly focused on the Job_status field as it contains the status of the Job which helps us to make the Job crawl. keep the data of the project.
